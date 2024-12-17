@@ -1,11 +1,24 @@
+/*
+
+ESp32 FOTA update using Github
+
+Autor : Madeesha Lakshan
+Date  : 12/17/2024
+Org   : SLT Digital Lab 
+Purpose : Perfome Firmware Over The Air update with github public repo 
+Remarks : This certification only valid until 2038. please verfiy cert.h file to establish the connection between esp32 and github
+          Enter your wifi credentials ssid and wifipassword
+
+*/
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <HTTPUpdate.h>
 #include <WiFiClientSecure.h>
 #include "cert.h"
 
-const char* ssid = "Dialog 4G 044";
-const char* wifiPassword = "c0Deb7c5";
+const char* ssid = "SSID";
+const char* wifiPassword = "PASSWORD";
 int status = WL_IDLE_STATUS;
 
 String FirmwareVer = "1.0.0";
