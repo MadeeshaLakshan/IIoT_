@@ -7,28 +7,31 @@ Org   : SLT Digital Lab
 Purpose : Perfome Firmware Over The Air update with github public repo 
 Remarks : This certification only valid until 2038. please verfiy cert.h file to establish the connection between esp32 and github
           Enter your wifi credentials ssid and wifipassword
+          Make sure to store json and bin file in a public repo and check the resourse can be accesible just copy and paste in your browser
 */
 
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <HTTPUpdate.h>
 #include <WiFiClientSecure.h>
+#include <ArduinoJson.h>
 #include "cert.h"
 
-//Enter your Wifi credentials
-const char* ssid = "SSID";
-const char* wifiPassword = "PASSWORD";
+// Enter your Wifi credentials
+const char* ssid = "Dialog 4G 044";
+const char* wifiPassword = "c0Deb7c5";
 
 int status = WL_IDLE_STATUS;
 
 String FirmwareVer = "1.0.0";
-//Make sure to store these file in a public repo and check the resourse can be accesible just capy and paste in your browser
-#define URL_fw_Version "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/refs/heads/main/version.txt"
-#define URL_fw_Bin "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/main/build/esp32.esp32.esp32/ESP32_FinalCodes_https.ino.bin"
+// Define the URL for the JSON file
+#define URL_fw_JSON "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/refs/heads/main/version.json"
 
+String newFwVersion = "";
+String newFwBinURL = "";
 
-unsigned long previousMillis = 0;  
-const long interval = 5000;        
+unsigned long previousMillis = 0;
+const long interval = 5000;
 
 void setup() {
     Serial.begin(115200);
@@ -93,7 +96,7 @@ void reconnect() {
 void firmwareUpdate() {
     WiFiClientSecure client;
     client.setCACert(rootCACertificate);
-    t_httpUpdate_return ret = httpUpdate.update(client, URL_fw_Bin);
+    t_httpUpdate_return ret = httpUpdate.update(client, newFwBinURL);
 
     switch (ret) {
         case HTTP_UPDATE_FAILED:
@@ -113,7 +116,7 @@ void firmwareUpdate() {
 int FirmwareVersionCheck() {
     String payload;
     int httpCode;
-    String FirmwareURL = URL_fw_Version;
+    String FirmwareURL = URL_fw_JSON;
     FirmwareURL += "?";
     FirmwareURL += String(rand());
 
@@ -141,11 +144,22 @@ int FirmwareVersionCheck() {
 
     if (httpCode == HTTP_CODE_OK) {
         payload.trim();
-        if (payload.equals(FirmwareVer)) {
+        StaticJsonDocument<512> doc;
+        DeserializationError error = deserializeJson(doc, payload);
+        if (error) {
+            Serial.print("JSON deserialization failed: ");
+            Serial.println(error.c_str());
+            return 0;
+        }
+
+        newFwVersion = doc["version"].as<String>();
+        newFwBinURL = doc["bin_url"].as<String>();
+
+        if (newFwVersion.equals(FirmwareVer)) {
             Serial.printf("\nDevice is already on the latest firmware version: %s\n", FirmwareVer.c_str());
             return 0;
         } else {
-            Serial.println(payload);
+            Serial.println(newFwVersion);
             Serial.println("New Firmware Detected");
             return 1;
         }
