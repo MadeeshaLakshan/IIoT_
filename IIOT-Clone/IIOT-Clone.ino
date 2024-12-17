@@ -1,5 +1,4 @@
 /*
-
 ESp32 FOTA update using Github
 
 Autor : Madeesha Lakshan
@@ -8,7 +7,6 @@ Org   : SLT Digital Lab
 Purpose : Perfome Firmware Over The Air update with github public repo 
 Remarks : This certification only valid until 2038. please verfiy cert.h file to establish the connection between esp32 and github
           Enter your wifi credentials ssid and wifipassword
-
 */
 
 #include <WiFi.h>
