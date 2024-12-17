@@ -15,16 +15,20 @@ Remarks : This certification only valid until 2038. please verfiy cert.h file to
 #include <WiFiClientSecure.h>
 #include "cert.h"
 
+//Enter your Wifi credentials
 const char* ssid = "SSID";
 const char* wifiPassword = "PASSWORD";
+
 int status = WL_IDLE_STATUS;
 
 String FirmwareVer = "1.0.0";
+//Make sure to store these file in a public repo and check the resourse can be accesible just capy and paste in your browser
 #define URL_fw_Version "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/refs/heads/main/version.txt"
 #define URL_fw_Bin "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/main/build/esp32.esp32.esp32/ESP32_FinalCodes_https.ino.bin"
 
-unsigned long previousMillis = 0;  // will store last time update was checked
-const long interval = 5000;        // interval at which to check for updates (milliseconds)
+
+unsigned long previousMillis = 0;  
+const long interval = 5000;        
 
 void setup() {
     Serial.begin(115200);
