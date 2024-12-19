@@ -1,3 +1,16 @@
+/*
+ESP32 FOTA Update Using GitHub Private repo
+
+Author  : Madeesha Lakshan
+Date    : 12/19/2024
+Org     : SLT Digital Lab
+Purpose : Perform Firmware Over The Air (FOTA) updates with a GitHub public repository and save wifi credentials to the flash(littlefs)
+Remarks : The certification is valid until 2038. Please verify the `cert.h` file to establish the connection between the ESP32 and GitHub.
+          Generate your personal access token(fine-grained)
+          Enter your credetials,links and PAT to the config.h file 
+          Ensure the JSON and binary (.bin) files are stored in a private repository and can be accessed by copying and pasting the URLs into your browser.
+*/
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <HTTPUpdate.h>
