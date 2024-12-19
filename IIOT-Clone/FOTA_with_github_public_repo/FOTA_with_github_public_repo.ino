@@ -14,8 +14,8 @@ Remarks : This certification only valid until 2038. please verfiy cert.h file to
 #include <HTTPClient.h>
 #include <HTTPUpdate.h>
 #include <WiFiClientSecure.h>
-#include <ArduinoJson.h> //v 7.2.1
-#include "cert.h"
+#include <ArduinoJson.h> // v 7.2.1
+#include "cert.h" // iclude certification file
 #include "config.h"  // Include the new configuration header file
 
 int status = WL_IDLE_STATUS;
