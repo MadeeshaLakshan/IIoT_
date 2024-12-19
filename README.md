@@ -1,31 +1,44 @@
-# IIOT-Clone
-clone the IIOT repo from https://github.com/RUM35H/IIoT
-# ESP32 OTA Firmware Update with GitHub
+IIoT
+==========
+IIoT edge implementation with best practices, Ultimate Goal will be moving all project to esp-idf,
+This project is focused on implementing robust production ready IIoT implementation
 
-## Introduction
+### directory brief
 
-This project demonstrates how to perform Over-the-Air (OTA) firmware updates on an ESP32 using files hosted on GitHub. The ESP32 checks for firmware updates periodically and downloads and installs the new firmware if a newer version is available. The firmware version information is stored in a JSON file on GitHub, and the ESP32 uses this file to determine if an update is necessary.
+    .               
+    ├── main                            # Main folder include all the files
+    │   ├── main.ino     
+    │   ├── config.h                    # All the configurations, such as wifi, mqtt, pin def.
+    │   ├── cert.h                      # rootCACertificate
+    │   └── README.md                   # Doc     
+    |── flows.json                      
+    |── README.md
 
-## How It Works
+### To Do
+- [ ] Firmware-Over-The-Air (FOTA) with github public repo, SSL
+- [ ] Firmware-Over-The-Air (FOTA) with github private repo, SSL
+    - [ ] OTA Partitions configurations
+    - [ ] Revert to old firmware based on event (button press/user input)
+    - [ ] After OTA, Getting WiFi credentials from SPIFFS ot LittleFS
+- [ ] Checking AP & STA mode on ESP32 at the same time (Custom webpage for user configurations)
+- [ ] Power Modes testing with ESP32 (Active mode, Modem Sleep mode, Light Sleep mode, Deep Sleep mode, Hibernation mode)
+- [ ] Blocking, Non-Blocking Functions test
+- [ ] Interrupt Handlers
+- [ ] MQTT over WiFi
+    - [ ] QoS 2, will, birth, retain messages
+    - [ ] Testing what is the max packet size can be sent by choosen MQTT library
+    - [ ] Testing on Sending long string in single json payload
+    - [ ] Test & Verify
+- [ ] HTTP(S) methods over WiFi (GET, POST, PUT, and DELETE) // With external server
+- [ ] Soft reset 
+- [ ] Hard reset
+- [ ] RTOS Implementation
+- [ ] IoT Mobile Framework
+    - [ ] ESP32 to Firebase (https://github.com/mobizt/FirebaseClient)
+    - [ ] Testing what is the max packet size can be sent by choosen MQTT library
+    - [ ] Testing on Sending long string in single json payload
+    - [ ] Test & Verify
 
-1. **Initialize File System**: The ESP32 initializes the LittleFS file system to store WiFi credentials.
-2. **Load WiFi Credentials**: The ESP32 loads saved WiFi credentials from the file system and attempts to connect to the WiFi network.
-3. **Check for Updates**: Periodically, the ESP32 checks a JSON file on GitHub to see if a newer firmware version is available.
-4. **Firmware Update**: If a new firmware version is detected, the ESP32 downloads the new firmware binary file from GitHub and updates itself.
+### References
+FOTA - https://www.youtube.com/watch?v=qCmdUtguwPw
 
-## Get Certificate File
-
-To securely connect to GitHub and download files, you need the GitHub SSL certificate. Here's how to get it:
-
-1. **Download Certificate**: Download the GitHub SSL certificate from a reliable source or extract it from your browser.
-2. **Save Certificate**: Save the certificate as `cert.h` and include it in your project directory.
-
-The `cert.h` file should look something like this:
-
-```cpp
-// cert.h
-const char* rootCACertificate = \
-"-----BEGIN CERTIFICATE-----\n" \
-"MIIDdzCCAl+gAwIBAgIEb8bmVzANBgkqhkiG9w0BAQsFADBoMQswCQYDVQQGEwJV\n" \
-...
-"-----END CERTIFICATE-----\n";
