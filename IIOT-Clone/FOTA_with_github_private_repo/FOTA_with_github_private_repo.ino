@@ -3,12 +3,9 @@
 #include <HTTPUpdate.h>
 #include <WiFiClientSecure.h>
 #include <LittleFS.h>
-#include <ArduinoJson.h>  // Include the ArduinoJson library
+#include <ArduinoJson.h>
 #include "cert.h"
-
-String FirmwareVer = "1.0.0";
-#define URL_fw_Version "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/main/version.json"  // Update to JSON file
-#define GITHUB_TOKEN "PAT" // Replace with your actual token
+#include "config.h"  // Include the config file
 
 unsigned long previousMillis = 0;  // will store last time update was checked
 const long interval = 5000;        // interval at which to check for updates (milliseconds)
@@ -91,7 +88,7 @@ void setup() {
 
     // Save the defined credentials
     // Comment out this line after initial run to avoid overwriting credentials
-    saveCredentials("Dialog 4G 044", "c0Deb7c5");
+    //saveCredentials(ssid, wifiPassword);
 
     // Load and connect to WiFi
     String ssid, password;
