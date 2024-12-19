@@ -14,18 +14,11 @@ Remarks : This certification only valid until 2038. please verfiy cert.h file to
 #include <HTTPClient.h>
 #include <HTTPUpdate.h>
 #include <WiFiClientSecure.h>
-#include <ArduinoJson.h>
+#include <ArduinoJson.h> //v 7.2.1
 #include "cert.h"
-
-// Enter your Wifi credentials
-const char* ssid = "Dialog 4G 044";
-const char* wifiPassword = "c0Deb7c5";
+#include "config.h"  // Include the new configuration header file
 
 int status = WL_IDLE_STATUS;
-
-String FirmwareVer = "1.0.0";
-// Define the URL for the JSON file
-#define URL_fw_JSON "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/refs/heads/main/version.json"
 
 String newFwVersion = "";
 String newFwBinURL = "";
