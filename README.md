@@ -15,7 +15,7 @@ This project is focused on implementing robust production ready IIoT implementat
     |── README.md
 
 ### To Do
-- [ ] Firmware-Over-The-Air (FOTA) with github public repo, SSL
+- [x] Firmware-Over-The-Air (FOTA) with github public repo, SSL
 - [ ] Firmware-Over-The-Air (FOTA) with github private repo, SSL
     - [ ] OTA Partitions configurations
     - [ ] Revert to old firmware based on event (button press/user input)
