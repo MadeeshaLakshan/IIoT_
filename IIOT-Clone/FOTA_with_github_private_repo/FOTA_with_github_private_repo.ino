@@ -2,14 +2,17 @@
 ESP32 FOTA Update Using GitHub Private repo
 
 Author  : Madeesha Lakshan
-Date    : 12/19/2024
+Date    : 12/20/2024
 Org     : SLT Digital Lab
-Purpose : Perform Firmware Over The Air (FOTA) updates with a GitHub public repository and save wifi credentials to the flash(littlefs)
-Remarks : The certification is valid until 2038. Please verify the `cert.h` file to establish the connection between the ESP32 and GitHub.
-          Generate your personal access token(fine-grained)
-          Enter your credetials,links and PAT to the config.h file 
-          Ensure the JSON and binary (.bin) files are stored in a private repository and can be accessed by copying and pasting the URLs into your browser.
+Features : FOTA update using Github private repo
+           Save wifi crentials to the Flash(littlefs)
+           Revert back to the previous version using external triggering
+Remarks  : The certification is valid until 2038. Please verify the `cert.h` file to establish the connection between the ESP32 and GitHub.
+           Generate your personal access token(fine-grained)
+           Enter your credetials,links and PAT to the config.h file 
+           Ensure the JSON and binary (.bin) files are stored in a private repository and can be accessed by copying and pasting the URLs into your browser.
 */
+
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -20,11 +23,53 @@ Remarks : The certification is valid until 2038. Please verify the `cert.h` file
 #include "cert.h"
 #include "config.h"  // Include the config file
 
+#include "esp_partition.h"  // Include ESP-IDF partition header
+#include "esp_ota_ops.h"    // Include ESP-IDF OTA operations header
+
 unsigned long previousMillis = 0;  // will store last time update was checked
 const long interval = 5000;        // interval at which to check for updates (milliseconds)
 String newFirmwareURL = "";        // Variable to store new firmware URL
 
-// Function to initialize File System
+// Function declarations
+void initFileSystem();
+void saveCredentials(const char* ssid, const char* password);
+bool loadCredentials(String &ssid, String &password);
+void connectToWiFi(const String& ssid, const String& password);
+void printPartitionInfo();
+void rollbackToPreviousFirmware();
+void checkForUpdate();
+void firmwareUpdate();
+int FirmwareVersionCheck();
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(ROLLBACK_PIN, INPUT_PULLUP);  // Set up the rollback pin as an input with an internal pull-up resistor
+    initFileSystem();
+
+    String ssid, password;
+    if (loadCredentials(ssid, password)) {
+        Serial.println("Credentials loaded, attempting to connect");
+        connectToWiFi(ssid, password);
+    } else {
+        Serial.println("Failed to load WiFi credentials");
+    }
+
+    printPartitionInfo();  // Print partition info at startup
+}
+
+void loop() {
+    unsigned long currentMillis = millis();
+    if (digitalRead(ROLLBACK_PIN) == LOW) {  // Check if the rollback pin is triggered (assuming active low)
+        Serial.println("Rollback pin triggered. Rolling back to previous firmware.");
+        rollbackToPreviousFirmware();
+    }
+
+    if (currentMillis - previousMillis >= interval) {
+        previousMillis = currentMillis;
+        checkForUpdate();
+    }
+}
+
 void initFileSystem() {
     if (!LittleFS.begin()) {
         Serial.println("Failed to mount LittleFS, formatting...");
@@ -41,7 +86,6 @@ void initFileSystem() {
     }
 }
 
-// Function to save WiFi credentials
 void saveCredentials(const char* ssid, const char* password) {
     File file = LittleFS.open("/wificredentials.txt", "w");
     if (!file) {
@@ -54,7 +98,6 @@ void saveCredentials(const char* ssid, const char* password) {
     Serial.println("Credentials saved");
 }
 
-// Function to load WiFi credentials
 bool loadCredentials(String &ssid, String &password) {
     File file = LittleFS.open("/wificredentials.txt", "r");
     if (!file) {
@@ -76,7 +119,6 @@ bool loadCredentials(String &ssid, String &password) {
     return true;
 }
 
-// Function to connect to WiFi
 void connectToWiFi(const String& ssid, const String& password) {
     WiFi.begin(ssid.c_str(), password.c_str());
 
@@ -95,30 +137,48 @@ void connectToWiFi(const String& ssid, const String& password) {
     }
 }
 
-void setup() {
-    Serial.begin(115200);
-    initFileSystem();
+void printPartitionInfo() {
+    const esp_partition_t* running = esp_ota_get_running_partition();
+    const esp_partition_t* next = esp_ota_get_next_update_partition(NULL);
+    const esp_partition_t* previous = esp_ota_get_last_invalid_partition();
 
-    // Save the defined credentials
-    // Comment out this line after initial run to avoid overwriting credentials
-    //saveCredentials(ssid, wifiPassword);
+    Serial.println("Running Partition:");
+    Serial.printf("Type: %d, Subtype: %d, Address: 0x%08x, Size: 0x%08x, Label: %s\n", 
+                  running->type, running->subtype, running->address, running->size, running->label);
 
-    // Load and connect to WiFi
-    String ssid, password;
-    if (loadCredentials(ssid, password)) {
-        Serial.println("Credentials loaded, attempting to connect");
-        connectToWiFi(ssid, password);
+    Serial.println("Next Partition:");
+    Serial.printf("Type: %d, Subtype: %d, Address: 0x%08x, Size: 0x%08x, Label: %s\n", 
+                  next->type, next->subtype, next->address, next->size, next->label);
+
+    Serial.println("Previous Invalid Partition:");
+    if (previous != NULL) {
+        Serial.printf("Type: %d, Subtype: %d, Address: 0x%08x, Size: 0x%08x, Label: %s\n", 
+                      previous->type, previous->subtype, previous->address, previous->size, previous->label);
     } else {
-        Serial.println("Failed to load WiFi credentials");
+        Serial.println("None");
     }
 }
 
-void loop() {
-    unsigned long currentMillis = millis();
+void rollbackToPreviousFirmware() {
+    const esp_partition_t* running = esp_ota_get_running_partition();
+    const esp_partition_t* next = esp_ota_get_next_update_partition(NULL);
+    const esp_partition_t* previous = (running == esp_ota_get_boot_partition()) ? next : esp_ota_get_boot_partition();
 
-    if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
-        checkForUpdate();
+    Serial.println("Running Partition:");
+    Serial.printf("Type: %d, Subtype: %d, Address: 0x%08x, Size: 0x%08x, Label: %s\n", 
+                  running->type, running->subtype, running->address, running->size, running->label);
+
+    if (previous != NULL && previous != running) {
+        Serial.println("Setting boot partition to the previous firmware.");
+        esp_err_t err = esp_ota_set_boot_partition(previous);
+        if (err != ESP_OK) {
+            Serial.printf("Failed to set boot partition: %s\n", esp_err_to_name(err));
+        } else {
+            Serial.println("Boot partition set successfully. Rebooting...");
+            ESP.restart();
+        }
+    } else {
+        Serial.println("No valid previous partition found or already running the previous firmware.");
     }
 }
 
@@ -154,6 +214,8 @@ void firmwareUpdate() {
             Serial.println("HTTP_UPDATE_OK");
             break;
     }
+
+    printPartitionInfo();  // Print partition info after update
 }
 
 int FirmwareVersionCheck() {
@@ -212,3 +274,4 @@ int FirmwareVersionCheck() {
     }
     return 0;
 }
+

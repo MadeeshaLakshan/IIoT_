@@ -1,9 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// WiFi Credentials
-const char* ssid = "Dialog 4G 044";
-const char* wifiPassword = "c0Deb7c5";
+// WiFi Credentials 
+//const char* ssid = "Dialog 4G 044";
+//const char* wifiPassword = "c0Deb7c5";
+
+#define ROLLBACK_PIN 0
 
 // Firmware Version
 String FirmwareVer = "1.0.0";
