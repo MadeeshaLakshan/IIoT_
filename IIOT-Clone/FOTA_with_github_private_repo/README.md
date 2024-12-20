@@ -23,12 +23,4 @@ Go to [GitHub](https://github.com) and log in to your account.
 - Give your token a descriptive name.
 - Select the scopes or permissions you want to grant this token. For this project, you will need at least `repo` access to read repository contents.
 
-### Step 4: Generate and Save the Token
-- Click on `Generate token` at the bottom of the page.
-- Copy the token to a secure location. **Note: You will not be able to see this token again once you leave this page.**
 
-### Step 5: Use the Token in Your Project
-- In your Arduino code, add the token where needed for authorization headers.
-
-```cpp
-#include "
