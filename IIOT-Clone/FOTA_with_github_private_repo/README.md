@@ -1,6 +1,10 @@
 # ESP32 Firmware Update via OTA
 
-This project demonstrates how to perform an Over-The-Air (OTA) firmware update for an ESP32 using a GitHub repository to host the firmware binary files.
+Perform an Over-The-Air (OTA) firmware update for an ESP32 using a GitHub repository to host the firmware binary files. The project includes the following features:
+
+- **OTA update using a GitHub private repository**: The ESP32 fetches the latest firmware from a private GitHub repository using a Personal Access Token (PAT) for authentication.
+- **Save WiFi credentials to Flash (LittleFS)**: WiFi credentials are saved to the Flash filesystem (LittleFS) for persistent storage.
+- **Revert to the previous firmware version using external triggering**: The firmware can be rolled back to a previous version when an external trigger (e.g., a button press) is detected.
 
 ## How to Get a Personal Access Token (PAT) from GitHub
 
@@ -27,12 +31,4 @@ Go to [GitHub](https://github.com) and log in to your account.
 - In your Arduino code, add the token where needed for authorization headers.
 
 ```cpp
-#include "cert.h"  // Ensure you have the root certificate included
-#include <HTTPClient.h>
-#include <WiFiClientSecure.h>
-
-// Define your GitHub token here
-#define GITHUB_TOKEN "your_personal_access_token_here"
-
-// Use the token in your HTTP requests
-httpUpdate.setAuthorization("token", GITHUB_TOKEN);
+#include "
