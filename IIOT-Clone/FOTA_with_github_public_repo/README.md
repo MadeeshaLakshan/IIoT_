@@ -25,10 +25,11 @@ This project demonstrates how to perform a Firmware Over The Air (FOTA) update o
      - Create a new file named `cert.h` in your Arduino project and paste the copied content as follows:
        ```cpp
        const char * rootCACertificate = \
-"-----BEGIN CERTIFICATE-----\n"
-"MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh\n"
-"pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl\n"
-"MrY=\n"
+          "-----BEGIN CERTIFICATE-----\n"
+         "MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh\n"
+          ...................................................................
+         "pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl\n"
+         "MrY=\n"
 "-----END CERTIFICATE-----\n";
 
 4. **Update Your Config.h ESP32 Code**
