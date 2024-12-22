@@ -24,12 +24,12 @@ This project demonstrates how to perform a Firmware Over The Air (FOTA) update o
    - To securely connect to GitHub over HTTPS, you need the correct root CA certificate.
      - Create a new file named `cert.h` in your Arduino project and paste the copied content as follows:
        ```cpp
-       const char* rootCACertificate = R"EOF(
-       -----BEGIN CERTIFICATE-----
-       MIIF...
-       -----END CERTIFICATE-----
-       )EOF";
-       ```
+       const char * rootCACertificate = \
+"-----BEGIN CERTIFICATE-----\n"
+"MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh\n"
+"pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl\n"
+"MrY=\n"
+"-----END CERTIFICATE-----\n";
 
 4. **Update Your Config.h ESP32 Code**
    - Update the SSID and WiFi password in your code:
