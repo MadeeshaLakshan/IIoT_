@@ -11,6 +11,6 @@ const char* wifiPassword = "c0Deb7c5";
 String FirmwareVer = "1.0.0";
 
 // Define the URL for the JSON file
-#define URL_fw_JSON "https://raw.githubusercontent.com/MadeeshaLakshan/ESP32_OTA_Github/refs/heads/main/version.json"
+#define URL_fw_JSON "https://raw.githubusercontent.com/MadeeshaLakshan/ESP8266_FOTA_PUBLIC/refs/heads/main/version.json"
 
 #endif 

@@ -145,17 +145,20 @@ int FirmwareVersionCheck() {
             return 0;
         }
 
-        newFwVersion = doc["version"].as<String>();
-        newFwBinURL = doc["bin_url"].as<String>();
+        // Extract esp32 version and bin_url from the JSON
+        newFwVersion = doc["esp32"]["version"].as<String>();  // Extract esp32 version
+        newFwBinURL = doc["esp32"]["bin_url"].as<String>();  // Extract esp32 bin_url
 
+        // Compare the extracted version with the current version
         if (newFwVersion.equals(FirmwareVer)) {
             Serial.printf("\nDevice is already on the latest firmware version: %s\n", FirmwareVer.c_str());
-            return 0;
+            return 0;  // No update needed
         } else {
             Serial.println(newFwVersion);
             Serial.println("New Firmware Detected");
-            return 1;
+            return 1;  // Firmware update needed
         }
     }
-    return 0;
+    return 0;  // Failed to get valid response
 }
+
