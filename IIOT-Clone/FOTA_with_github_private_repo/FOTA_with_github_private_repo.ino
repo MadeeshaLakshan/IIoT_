@@ -7,13 +7,14 @@ Org     : SLT Digital Lab
 Features : FOTA update using Github private repo
            Save wifi crentials to the Flash(littlefs)
            Revert back to the previous version using external triggering
+           save certification files to the flash(littlefs)
 Remarks  : The certification is valid until 2038. Please verify the `cert.h` file to establish the connection between the ESP32 and GitHub.
            Generate your personal access token(fine-grained)
+           First time you compile the code uncomment saveCredentials and saveRootCACertificate in the setup function
            Enter your credetials,links and PAT to the config.h file 
            Ensure the JSON and binary (.bin) files are stored in a private repository and can be accessed by copying and pasting the URLs into your browser.
+           
 */
-
-
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <HTTPUpdate.h>
@@ -40,22 +41,40 @@ void rollbackToPreviousFirmware();
 void checkForUpdate();
 void firmwareUpdate();
 int FirmwareVersionCheck();
+void saveRootCACertificate(const char* rootCA);
+bool loadRootCACertificate(String &rootCA);
 
 void setup() {
     Serial.begin(115200);
     pinMode(ROLLBACK_PIN, INPUT_PULLUP);  // Set up the rollback pin as an input with an internal pull-up resistor
     initFileSystem();
 
-    String ssid, password;
+    // Save the root CA certificate to LittleFS
+    //saveRootCACertificate(rootCACertificate);
+
+    // Save WiFi credentials
+    //saveCredentials(ssid, wifiPassword);
+    String ssid, password, rootCA;
+    // Load WiFi credentials and connect to WiFi
     if (loadCredentials(ssid, password)) {
         Serial.println("Credentials loaded, attempting to connect");
-        connectToWiFi(ssid, password);
+        connectToWiFi(ssid,password);
     } else {
         Serial.println("Failed to load WiFi credentials");
     }
 
-    printPartitionInfo();  // Print partition info at startup
+    // Load Root CA certificate
+    if (loadRootCACertificate(rootCA)) {
+        Serial.println("Root CA loaded successfully");
+    } else {
+        Serial.println("Failed to load Root CA");
+    }
+
+    // Uncomment the following line if you want to print partition info at startup
+    // printPartitionInfo();  // Print partition info at startup
 }
+
+
 
 void loop() {
     unsigned long currentMillis = millis();
@@ -196,7 +215,14 @@ void checkForUpdate() {
 
 void firmwareUpdate() {
     WiFiClientSecure client;
-    client.setCACert(rootCACertificate);
+    String rootCA;
+    if (loadRootCACertificate(rootCA)) {
+        client.setCACert(rootCA.c_str());
+    } else {
+        Serial.println("Using built-in root CA");
+        client.setCACert(rootCACertificate);  // Fallback to the built-in root CA
+    }
+
     httpUpdate.setAuthorization("token", GITHUB_TOKEN); // Set the authorization header
 
     t_httpUpdate_return ret = httpUpdate.update(client, newFirmwareURL);
@@ -228,7 +254,14 @@ int FirmwareVersionCheck() {
     WiFiClientSecure* client = new WiFiClientSecure;
 
     if (client) {
-        client->setCACert(rootCACertificate);
+        String rootCA;
+        if (loadRootCACertificate(rootCA)) {
+            client->setCACert(rootCA.c_str());
+        } else {
+            Serial.println("Using built-in root CA");
+            client->setCACert(rootCACertificate);  // Fallback to the built-in root CA
+        }
+
         HTTPClient https;
 
         if (https.begin(*client, FirmwareURL)) {
@@ -274,4 +307,33 @@ int FirmwareVersionCheck() {
     }
     return 0;
 }
+
+void saveRootCACertificate(const char* rootCA) {
+    File file = LittleFS.open("/rootCA.pem", "w");
+    if (!file) {
+        Serial.println("Failed to open file for writing root CA");
+        return;
+    }
+    file.print(rootCA);
+    file.close();
+    Serial.println("Root CA saved");
+}
+
+bool loadRootCACertificate(String &rootCA) {
+    File file = LittleFS.open("/rootCA.pem", "r");
+    if (!file) {
+        Serial.println("Failed to open file for reading root CA");
+        return false;
+    }
+
+    rootCA = file.readString();
+    file.close();
+
+    if (rootCA.length() == 0) {
+        return false;
+    }
+
+    return true;
+}
+
 
