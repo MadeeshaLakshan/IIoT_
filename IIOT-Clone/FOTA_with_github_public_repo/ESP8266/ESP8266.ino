@@ -1,3 +1,14 @@
+/*
+ESP8266 FOTA update using Github
+
+Autor : Madeesha Lakshan
+Date  : 12/28/2024
+Org   : SLT Digital Lab 
+Purpose : Perfome Firmware Over The Air update with github public repo 
+Remarks : This certification only valid until 2038. please verfiy cert.h file to establish the connection between esp8266 and github
+          Enter your wifi credentials ssid and wifipassword
+          Make sure to store json and bin file in a public repo and check the resourse can be accessible, by just copy and paste in your browser
+*/
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
