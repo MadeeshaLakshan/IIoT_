@@ -9,9 +9,15 @@ This project demonstrates how to perform a Firmware Over The Air (FOTA) update o
    - Create a `version.json` file in your GitHub repository with the following content:
      ```json
      {
-       "version": "1.0.1",
-       "bin_url": "https://raw.githubusercontent.com/YourUsername/YourRepository/main/your_firmware.bin"
-     }
+  "esp8266": {
+    "version": "1.0.1",
+    "bin_url": "https://raw.githubusercontent.com/MadeeshaLakshan/ESP8266_FOTA_PUBLIC/main/ESP8266.ino.bin"
+  },
+  "esp32": {
+    "version": "1.0.1",
+    "bin_url": "https://raw.githubusercontent.com/MadeeshaLakshan/ESP8266_FOTA_PUBLIC/main/FOTA_with_github_public_repo.ino.bin"
+  }
+}
      ```
    - Replace `1.0.1` with the new firmware version.
    - Replace `https://raw.githubusercontent.com/YourUsername/YourRepository/main/your_firmware.bin` with the URL of your compiled firmware binary file.
