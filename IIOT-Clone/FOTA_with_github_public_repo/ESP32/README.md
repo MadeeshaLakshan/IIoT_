@@ -36,7 +36,7 @@ This project demonstrates how to perform a Firmware Over The Air (FOTA) update o
           ...................................................................
          "pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl\n"
          "MrY=\n"
-"-----END CERTIFICATE-----\n";
+          "-----END CERTIFICATE-----\n";
 
 4. **Update Your Config.h ESP32 Code**
    - Update the SSID and WiFi password in your code:
