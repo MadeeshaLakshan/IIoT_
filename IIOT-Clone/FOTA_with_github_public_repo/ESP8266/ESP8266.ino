@@ -4,47 +4,12 @@
 #include <WiFiClientSecure.h>
 #include <CertStoreBearSSL.h>
 #include <ArduinoJson.h>
+#include "config.h"
 
 BearSSL::CertStore certStore;
 #include <time.h>
 
-const String FirmwareVer = "1.0.0";  // Current firmware version of the ESP8266
-#define URL_fw_Version "/MadeeshaLakshan/ESP8266_FOTA_PUBLIC/refs/heads/main/version.json"
-const char* host = "raw.githubusercontent.com";
-const int httpsPort = 443;
-
-// DigiCert High Assurance EV Root CA
-const char trustRoot[] PROGMEM = R"EOF(
------BEGIN CERTIFICATE-----
-MIIDjjCCAnagAwIBAgIQAzrx5qcRqaC7KGSxHQn65TANBgkqhkiG9w0BAQsFADBh
-MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
-d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBH
-MjAeFw0xMzA4MDExMjAwMDBaFw0zODAxMTUxMjAwMDBaMGExCzAJBgNVBAYTAlVT
-MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
-b20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IEcyMIIBIjANBgkqhkiG
-9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuzfNNNx7a8myaJCtSnX/RrohCgiN9RlUyfuI
-2/Ou8jqJkTx65qsGGmvPrC3oXgkkRLpimn7Wo6h+4FR1IAWsULecYxpsMNzaHxmx
-1x7e/dfgy5SDN67sH0NO3Xss0r0upS/kqbitOtSZpLYl6ZtrAGCSYP9PIUkY92eQ
-q2EGnI/yuum06ZIya7XzV+hdG82MHauVBJVJ8zUtluNJbd134/tJS7SsVQepj5Wz
-tCO7TG1F8PapspUwtP1MVYwnSlcUfIKdzXOS0xZKBgyMUNGPHgm+F6HmIcr9g+UQ
-vIOlCsRnKPZzFBQ9RnbDhxSJITRNrw9FDKZJobq7nMWxM4MphQIDAQABo0IwQDAP
-BgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBhjAdBgNVHQ4EFgQUTiJUIBiV
-5uNu5g/6+rkS7QYXjzkwDQYJKoZIhvcNAQELBQADggEBAGBnKJRvDkhj6zHd6mcY
-1Yl9PMWLSn/pvtsrF9+wX3N3KjITOYFnQoQj8kVnNeyIv/iPsGEMNKSuIEyExtv4
-NeF22d+mQrvHRAiGfzZ0JFrabA0UWTW98kndth/Jsw1HKj2ZL7tcu7XUIOGZX1NG
-Fdtom/DzMNU+MeKNhJ7jitralj41E6Vf8PlwUHBHQRFXGU7Aj64GxJUTFy8bJZ91
-8rGOmaFvE7FBcf6IKshPECBV1/MUReXgRPTqh5Uykw7+U0b6LJ3/iyK5S9kJRaTe
-pLiaWN0bfVKfjllDiIGknibVb63dDcY3fe0Dkhvld1927jyNxF1WW6LZZm6zNTfl
-MrY=
------END CERTIFICATE-----
-)EOF";
 X509List cert(trustRoot);
-
-extern const unsigned char caCert[] PROGMEM;
-extern const unsigned int caCertLen;
-
-const char* ssid = "Dialog 4G 044";
-const char* password = "c0Deb7c5";
 
 // Function to set the time
 void setClock() {
@@ -166,32 +131,25 @@ const long mini_interval = 1000;
 
 void repeatedCall() {
     unsigned long currentMillis = millis();
-    if ((currentMillis - previousMillis) >= interval) {
-        previousMillis = currentMillis;
-        setClock();
-        FirmwareUpdate();
-    }
 
-    if ((currentMillis - previousMillis_2) >= mini_interval) {
-        static int idle_counter = 0;
+    if (currentMillis - previousMillis_2 >= mini_interval) {
         previousMillis_2 = currentMillis;
-        Serial.print(" Active fw version:");
-        Serial.println(FirmwareVer);
-        if (WiFi.status() != WL_CONNECTED)
-            connect_wifi();
+        connect_wifi();
+        delay(500);
+        FirmwareUpdate();
     }
 }
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("");
-    Serial.println("Start");
-    WiFi.mode(WIFI_STA);
+    delay(500);
     connect_wifi();
     setClock();
-    pinMode(LED_BUILTIN, OUTPUT);
+    delay(500);
+    FirmwareUpdate();
 }
 
 void loop() {
     repeatedCall();
+    delay(30000);
 }
