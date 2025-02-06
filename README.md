@@ -30,8 +30,8 @@ This project is focused on implementing robust production ready IIoT implementat
     - [ ] Testing on Sending long string in single json payload
     - [ ] Test & Verify
 - [ ] HTTP(S) methods over WiFi (GET, POST, PUT, and DELETE) // With external server
-- [ ] Soft reset 
-- [ ] Hard reset
+- [x] Soft reset 
+- [x] Hard reset
 - [ ] RTOS Implementation
 - [ ] IoT Mobile Framework
     - [ ] ESP32 to Firebase (https://github.com/mobizt/FirebaseClient)
