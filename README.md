@@ -20,19 +20,19 @@ This project is focused on implementing robust production ready IIoT implementat
     - [x] OTA Partitions configurations
     - [x] Revert to old firmware based on event (button press/user input)
     - [x] After OTA, Getting WiFi credentials from SPIFFS ot LittleFS
-- [ ] Checking AP & STA mode on ESP32 at the same time (Custom webpage for user configurations)
-- [ ] Power Modes testing with ESP32 (Active mode, Modem Sleep mode, Light Sleep mode, Deep Sleep mode, Hibernation mode)
-- [ ] Blocking, Non-Blocking Functions test
-- [ ] Interrupt Handlers
+- [x] Checking AP & STA mode on ESP32 at the same time (Custom webpage for user configurations)
+- [x] Power Modes testing with ESP32 (Active mode, Modem Sleep mode, Light Sleep mode, Deep Sleep mode, Hibernation mode)
+- [x] Blocking, Non-Blocking Functions test
+- [x] Interrupt Handlers
 - [ ] MQTT over WiFi
-    - [ ] QoS 2, will, birth, retain messages
+    - [x] QoS 2, will, birth, retain messages
     - [ ] Testing what is the max packet size can be sent by choosen MQTT library
     - [ ] Testing on Sending long string in single json payload
     - [ ] Test & Verify
 - [ ] HTTP(S) methods over WiFi (GET, POST, PUT, and DELETE) // With external server
 - [x] Soft reset 
 - [x] Hard reset
-- [ ] RTOS Implementation
+- [x] RTOS Implementation
 - [ ] IoT Mobile Framework
     - [ ] ESP32 to Firebase (https://github.com/mobizt/FirebaseClient)
     - [ ] Testing what is the max packet size can be sent by choosen MQTT library
